@@ -1,10 +1,10 @@
 <?php
 // import numbers
-$locationpairs = file_get_contents('input.txt');
+$locationpairs = file_get_contents('../input.txt');
 
-// setup empty arrays for numbers and output value
+// setup empty arrays for numbers and answer
 $l1 = $l2 = [];
-$val = 0;
+$answer = 0;
 
 // convert numbers into two arrays
 $pattern = '/^(\d{5})\s{3}(\d{5})$/m';
@@ -21,8 +21,14 @@ sort($l2);
 
 // loop through arrays and find difference between pairs
 for ($i=0; $i<count($l1); $i++) {
-    $val += abs($l2[$i] - $l1[$i]);
+    $answer += abs($l2[$i] - $l1[$i]);
 }
+?>
+<html>
+    <?php include '../../includes/head.php' ?>
+    <body>
+        <h1>1a</h1>
+        <p><?php echo $answer; ?></p>
+    </body>
+</html>
 
-// answer
-echo $val;
