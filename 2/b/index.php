@@ -3,6 +3,34 @@
 $reports = explode("\n", file_get_contents('../input.txt'));
 $safereports = 0;
 
+function isValidSequence($report) {
+    $errors = 0;
+    $direction = null; // Ascending (1) or Descending (-1)
+
+    for ($i = 1; $i < count($report); $i++) {
+        $difference = $report[$i] - $report[$i - 1];
+
+        // Determine the direction based on the first valid difference
+        if ($direction === null && $difference !== 0) {
+            $direction = $difference > 0 ? 1 : -1;
+        }
+
+        // Check if the current number follows the direction and is within range
+        if (($direction === 1 && ($difference < 1 || $difference > 3)) ||  // Ascending but out of range
+            ($direction === -1 && ($difference > -1 || $difference < -3))  // Descending but out of range
+        ) {
+            $errors++;
+        }
+
+        // If there are more than 1 violation, the sequence is invalid
+        if ($errors > 1) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 // loop through reports
 foreach ($reports as $report) {
     echo "<br><strong>$report</strong><br>";
@@ -11,61 +39,13 @@ foreach ($reports as $report) {
     // ignore empty rows
     if (count($currentreport) <= 1) {
         break;
-    }
-
-    $errors = 0; // reset errors, we can allow one
-    $safelevels = 0; // needs to equal array count to pass
-    $prev = 0; // previous value
-    $direction = false; // direction of level values
-
-    foreach ($currentreport as $item){
-        // set first level of this report and mark as safe
-        if (! $prev) {
-            $prev = $item;
-            $safelevels++;
-            continue;
+    } else {
+        if (isValidSequence($currentreport)) {
+            echo "SAFE<br>";
+            $safereports++;
         }
-
-        // if not set, which direction are the levels going?
-        if ( ! $direction){
-            $direction = ($item > $prev) ? 'ASC' : 'DESC';
-        }
-
-        // if values are moving the wrong direction or not moving, not safe
-        if (
-            $item > $prev && $direction == 'DESC' ||
-            $item < $prev && $direction == 'ASC' ||
-            $item == $prev) {
-                echo "$prev $item wrong direction<br>";
-                $errors++;
-                if ($errors <= 1){
-                    $item = $prev;
-                }
-         }
-
-
-        // check for maximum difference of 3
-        if (abs($item - $prev) > 3) {
-            echo "$prev $item greater than 3 apart<br>";
-            $errors++;
-            if ($errors <= 1){
-                $item = $prev;
-            }
-        }
-
-        // it's safe
-        if ($errors <= 1) {
-            $prev = $item;
-        }
-    }
-
-    // do the number of safe levels match the number of levels?
-    if ($errors <= 1) {
-        echo "SAFE<br>";
-        $safereports++;
     }
 }
-
 ?>
 <html>
     <?php include '../../includes/head.php' ?>
