@@ -5,10 +5,14 @@ $data = file_get_contents('../input.txt');
 // start at zero
 $answer = 0;
 
-// horizontal instances
+// get line length
 $rows = explode("\n", $data);
 $l = strlen($rows[0]);
 
+// strip newlines from data
+$data = str_replace("\n", "", $data);
+
+// horizontal instances
 foreach ($rows as $row) {
     $xmas = substr_count($row, 'XMAS');
     $samx = substr_count($row, 'SAMX');
@@ -50,6 +54,8 @@ function findXmas($i, $l, $data) {
             return true;
         }
     }
+
+    return false;
 }
 
 function findSamx($i, $l, $data) {
@@ -74,6 +80,8 @@ function findSamx($i, $l, $data) {
             return true;
         }
     }
+
+    return false;
 }
 ?>
 <html>
